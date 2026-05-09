@@ -1,6 +1,5 @@
 import Adw from 'gi://Adw';
 import Gio from 'gi://Gio';
-import GObject from 'gi://GObject';
 import Gtk from 'gi://Gtk';
 
 import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
@@ -11,37 +10,35 @@ const METRICS = [
     { id: 'freq', label: 'Frequency (GHz)' },
 ];
 
-const MetricToggle = GObject.registerClass(
-class MetricToggle extends Adw.SwitchRow {
-    _init(metric, settings) {
-        super._init({ title: metric.label });
-        this._metric = metric;
-        this._settings = settings;
-        this.set_active(settings.get_strv('panel-metrics').includes(metric.id));
-        this.connect('notify::active', () => this._sync());
-        this._signalId = settings.connect('changed::panel-metrics', () => {
-            this.set_active(settings.get_strv('panel-metrics').includes(metric.id));
-        });
-        this.connect('destroy', () => settings.disconnect(this._signalId));
-    }
+function createMetricToggle(metric, settings) {
+    const row = new Adw.SwitchRow({ title: metric.label });
 
-    _sync() {
-        const current = this._settings.get_strv('panel-metrics');
-        const wanted = this.get_active();
-        const has = current.includes(this._metric.id);
+    const sync = () => {
+        const current = settings.get_strv('panel-metrics');
+        const wanted = row.get_active();
+        const has = current.includes(metric.id);
         if (wanted === has)
             return;
         let next;
         if (wanted) {
             const order = METRICS.map(m => m.id);
-            const merged = [...current, this._metric.id];
+            const merged = [...current, metric.id];
             next = order.filter(id => merged.includes(id));
         } else {
-            next = current.filter(id => id !== this._metric.id);
+            next = current.filter(id => id !== metric.id);
         }
-        this._settings.set_strv('panel-metrics', next);
-    }
-});
+        settings.set_strv('panel-metrics', next);
+    };
+
+    row.set_active(settings.get_strv('panel-metrics').includes(metric.id));
+    row.connect('notify::active', sync);
+    const signalId = settings.connect('changed::panel-metrics', () => {
+        row.set_active(settings.get_strv('panel-metrics').includes(metric.id));
+    });
+    row.connect('destroy', () => settings.disconnect(signalId));
+
+    return row;
+}
 
 export default class CpuUtilPreferences extends ExtensionPreferences {
     fillPreferencesWindow(window) {
@@ -100,7 +97,7 @@ export default class CpuUtilPreferences extends ExtensionPreferences {
         });
         page.add(metrics);
         for (const m of METRICS)
-            metrics.add(new MetricToggle(m, settings));
+            metrics.add(createMetricToggle(m, settings));
 
         const intel = new Adw.PreferencesGroup({
             title: 'Intel-specific',
