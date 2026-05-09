@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <enum id="org.gnome.shell.extensions.cpu-util.TempUnit">
+    <value nick="celsius" value="0"/>
+    <value nick="fahrenheit" value="1"/>
+  </enum>
+
+  <schema id="org.gnome.shell.extensions.cpu-util"
+          path="/org/gnome/shell/extensions/cpu-util/">
+
+    <key name="refresh-interval" type="u">
+      <default>2</default>
+      <range min="1" max="10"/>
+      <summary>Refresh interval (seconds)</summary>
+      <description>How often to sample CPU stats. Lower values use more energy.</description>
+    </key>
+
+    <key name="panel-metrics" type="as">
+      <default>['usage','temp','freq']</default>
+      <summary>Metrics shown in the top-bar label</summary>
+      <description>Any combination of: usage, temp, freq. Order is preserved in the label.</description>
+    </key>
+
+    <key name="temp-unit" enum="org.gnome.shell.extensions.cpu-util.TempUnit">
+      <default>'celsius'</default>
+      <summary>Temperature unit</summary>
+    </key>
+
+    <key name="show-per-core-graph" type="b">
+      <default>true</default>
+      <summary>Show per-core sparkline in the menu</summary>
+    </key>
+
+    <key name="show-governor" type="b">
+      <default>true</default>
+      <summary>Show CPU governor row in the menu</summary>
+    </key>
+
+    <key name="show-rapl" type="b">
+      <default>true</default>
+      <summary>Show RAPL package power row (Intel only)</summary>
+      <description>Requires read access to /sys/class/powercap/intel-rapl. Run setup/install-rapl-access.sh once.</description>
+    </key>
+
+    <key name="show-throttle-alerts" type="b">
+      <default>true</default>
+      <summary>Show thermal-throttle alerts</summary>
+      <description>Flashes the panel indicator and shows a banner row when any core throttles.</description>
+    </key>
+
+  </schema>
+</schemalist>

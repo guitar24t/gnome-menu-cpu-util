@@ -1,0 +1,53 @@
+.cpu-util-panel-label {
+    font-feature-settings: "tnum";
+    padding: 0 4px;
+}
+
+.cpu-util-panel-label-throttling {
+    color: #ff5555;
+}
+
+.cpu-util-menu-value {
+    font-feature-settings: "tnum";
+    padding-left: 1em;
+}
+
+.cpu-util-corebars {
+    spacing: 2px;
+    padding: 4px 0;
+}
+
+.cpu-util-corebar {
+    width: 6px;
+    background-color: rgba(255, 255, 255, 0.12);
+    border-radius: 1px;
+}
+
+.cpu-util-corebar-fill {
+    background-color: #4a90e2;
+    border-radius: 1px;
+}
+
+.cpu-util-corebar-fill-pcore {
+    background-color: #4a90e2;
+}
+
+.cpu-util-corebar-fill-ecore {
+    background-color: #7bc96f;
+}
+
+.cpu-util-corebar-fill-hot {
+    background-color: #e25555;
+}
+
+.cpu-util-throttle-banner {
+    color: #ff5555;
+    font-weight: bold;
+    padding: 4px 12px;
+}
+
+.cpu-util-section-header {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.85em;
+    padding: 6px 12px 2px 12px;
+}

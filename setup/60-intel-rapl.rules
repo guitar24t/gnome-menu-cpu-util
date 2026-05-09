@@ -1,0 +1,4 @@
+# Grant the 'powermon' group read access to Intel RAPL energy counters.
+# Installed by setup/install-rapl-access.sh.
+SUBSYSTEM=="powercap", KERNEL=="intel-rapl:*", \
+  RUN+="/bin/sh -c 'chgrp -R powermon /sys/%p && chmod -R g+r /sys/%p'"

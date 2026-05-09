@@ -1,0 +1,9 @@
+{
+  "uuid": "cpu-util@robhilton.dev",
+  "name": "CPU Util",
+  "description": "Top-bar CPU monitor: utilization, temperature, frequency, governor, with Intel-specific extras (RAPL power, hybrid P/E split, turbo state, throttle alerts).",
+  "shell-version": ["45", "46", "47", "48"],
+  "url": "https://github.com/robhilton/gnome-menu-cpu-util",
+  "settings-schema": "org.gnome.shell.extensions.cpu-util",
+  "gettext-domain": "cpu-util"
+}

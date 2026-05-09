@@ -1,0 +1,21 @@
+# Build artifacts
+*.zip
+build/
+dist/
+
+# Compiled GSettings schema (generated from .gschema.xml)
+schemas/gschemas.compiled
+
+# Compiled gettext catalogs (generated from .po)
+po/*.mo
+locale/
+
+# Editor / OS noise
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Node / tooling (in case anyone runs lint/format here)
+node_modules/
