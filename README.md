@@ -32,13 +32,13 @@ Tested target: **Ubuntu 24.04 LTS / GNOME 46**. Modern build supports **GNOME Sh
 
 2. **Download** the matching asset from the [latest release](https://github.com/guitar24t/gnome-menu-cpu-util/releases/latest):
 
-    - `cpu-util@robhilton.dev.shell-extension.zip` — modern (GNOME Shell 45+)
-    - `cpu-util@robhilton.dev.legacy.shell-extension.zip` — legacy (GNOME Shell 40–44)
+    - `cpu-util@guitar24t.dev.shell-extension.zip` — modern (GNOME Shell 45+)
+    - `cpu-util@guitar24t.dev.legacy.shell-extension.zip` — legacy (GNOME Shell 40–44)
 
 3. **Install** the zip (use `--force` to overwrite an existing install on upgrade):
 
     ```sh
-    gnome-extensions install --force ~/Downloads/cpu-util@robhilton.dev.shell-extension.zip
+    gnome-extensions install --force ~/Downloads/cpu-util@guitar24t.dev.shell-extension.zip
     ```
 
     Substitute the legacy filename if you downloaded that one.
@@ -51,13 +51,13 @@ Tested target: **Ubuntu 24.04 LTS / GNOME 46**. Modern build supports **GNOME Sh
 5. **Enable** the extension:
 
     ```sh
-    gnome-extensions enable cpu-util@robhilton.dev
+    gnome-extensions enable cpu-util@guitar24t.dev
     ```
 
 6. **(Intel only) Grant RAPL power access.** Without this, the package power row reads `N/A`. The setup script ships inside the zip; run it once and then log out and back in:
 
     ```sh
-    sudo ~/.local/share/gnome-shell/extensions/cpu-util@robhilton.dev/setup/install-rapl-access.sh
+    sudo ~/.local/share/gnome-shell/extensions/cpu-util@guitar24t.dev/setup/install-rapl-access.sh
     ```
 
     The script creates a `powermon` group, adds your user to it, and installs a udev rule that grants the group read access to `/sys/class/powercap/intel-rapl:*/energy_uj` (root-only by default on most kernels). The log-out/in is required for the group membership to take effect.
@@ -80,13 +80,13 @@ Then restart GNOME Shell, enable, and (on Intel) run the RAPL setup as in steps 
 
 Open preferences:
 ```sh
-gnome-extensions prefs cpu-util@robhilton.dev
+gnome-extensions prefs cpu-util@guitar24t.dev
 ```
 
 ### Uninstall
 
 ```sh
-gnome-extensions uninstall cpu-util@robhilton.dev
+gnome-extensions uninstall cpu-util@guitar24t.dev
 ```
 
 (Or `make uninstall` if installed from source.)

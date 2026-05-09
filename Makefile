@@ -1,4 +1,4 @@
-UUID := cpu-util@robhilton.dev
+UUID := cpu-util@guitar24t.dev
 INSTALL_DIR := $(HOME)/.local/share/gnome-shell/extensions/$(UUID)
 BUILD_DIR := build
 

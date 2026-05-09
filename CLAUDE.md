@@ -9,7 +9,7 @@ A GNOME Shell extension that adds a top-bar CPU monitor with Intel-specific tele
 - **Modern** (root: `extension.js`, `prefs.js`, `lib/`) targets GNOME Shell 45+. ESM imports (`import X from 'gi://X'`), `Extension` class, `ExtensionPreferences` class, libadwaita prefs.
 - **Legacy** (`legacy/extension.js`, `legacy/prefs.js`, `legacy/lib/`) targets GNOME Shell 40–44. Legacy imports (`const X = imports.gi.X`), exported `init`/`enable`/`disable` functions, `buildPrefsWidget()` returning a GTK 3 widget tree (`imports.gi.versions.Gtk = '3.0'`).
 
-Both builds share `schemas/`, `stylesheet.css`, and `setup/`. `make install` auto-detects `gnome-shell --version` and installs the right one to `~/.local/share/gnome-shell/extensions/cpu-util@robhilton.dev/`. `make which` shows what would be picked.
+Both builds share `schemas/`, `stylesheet.css`, and `setup/`. `make install` auto-detects `gnome-shell --version` and installs the right one to `~/.local/share/gnome-shell/extensions/cpu-util@guitar24t.dev/`. `make which` shows what would be picked.
 
 **When you change the modern code, the legacy tree does NOT update automatically.** Port the change by hand. The behavior is deliberately identical between the two; the only differences are the import system, the prefs UI toolkit, and the entry-point shape.
 
@@ -26,7 +26,7 @@ Verify it loads at all before touching anything else:
 ```sh
 make install
 # Wayland: log out and back in. X11: Alt+F2, type 'r', Enter.
-gnome-extensions enable cpu-util@robhilton.dev
+gnome-extensions enable cpu-util@guitar24t.dev
 # In another terminal:
 make logs   # tails journalctl for gnome-shell
 ```
@@ -95,7 +95,7 @@ I haven't run this on Linux, so things to check first if there are issues:
 
 The plan's verification section is reproduced in `README.md` Architecture section conceptually, but the full checklist is:
 
-1. `make install` → restart shell → `gnome-extensions enable cpu-util@robhilton.dev`. Indicator visible.
+1. `make install` → restart shell → `gnome-extensions enable cpu-util@guitar24t.dev`. Indicator visible.
 2. Open menu — usage, temp, freq, governor rows render with non-zero values.
 3. `stress-ng --cpu $(nproc) --timeout 30s` — usage climbs to ~100%, temp rises, per-core bars fill. Cross-check % against `htop`.
 4. `sudo cpupower frequency-set -g powersave` then `-g performance` — governor row updates within one tick.

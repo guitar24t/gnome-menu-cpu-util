@@ -1,5 +1,5 @@
 {
-  "uuid": "cpu-util@robhilton.dev",
+  "uuid": "cpu-util@guitar24t.dev",
   "name": "CPU Util",
   "description": "Top-bar CPU monitor: utilization, temperature, frequency, governor, with Intel-specific extras (RAPL power, hybrid P/E split, turbo state, throttle alerts). Legacy build for GNOME Shell 40-44.",
   "shell-version": ["40", "41", "42", "43", "44"],
