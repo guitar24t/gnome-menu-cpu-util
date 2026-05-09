@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libglib2.0-bin zip jq
+
+      - name: Derive version from tag
+        id: version
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          TAG="${REF#refs/tags/}"
+          VERSION="${TAG#v}"
+          {
+            echo "tag=$TAG"
+            echo "version=$VERSION"
+          } >> "$GITHUB_OUTPUT"
+          echo "Releasing $TAG (version-name=$VERSION)"
+
+      - name: Syntax-check JavaScript
+        run: |
+          set -e
+          # Treat .js as ESM so modern files (gi:// imports) parse. Legacy
+          # files use no import/export syntax, so they parse under either mode.
+          echo '{"type":"module"}' > package.json
+          find extension.js prefs.js lib legacy -name '*.js' -type f -print0 \
+            | xargs -0 -n1 node --check
+          rm package.json
+
+      - name: Validate GSettings schema
+        run: glib-compile-schemas --strict --dry-run schemas/
+
+      - name: Stamp version-name into metadata.json
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -e
+          for f in metadata.json legacy/metadata.json; do
+            jq --arg v "$VERSION" '. + {"version-name": $v}' "$f" > "$f.tmp"
+            mv "$f.tmp" "$f"
+            echo "--- $f ---"
+            cat "$f"
+          done
+
+      - name: Build modern + legacy zips
+        run: |
+          make pack-modern
+          make pack-legacy
+          ls -la build/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            build/*.shell-extension.zip

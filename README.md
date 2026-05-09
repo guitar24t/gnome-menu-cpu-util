@@ -19,13 +19,54 @@ Tested target: **Ubuntu 24.04 LTS / GNOME 46**. Modern build supports **GNOME Sh
 
 ## Install
 
-### Prerequisites
+### From a release (recommended)
 
-- `glib-compile-schemas` (from `libglib2.0-bin`)
-- `make`, `zip`
-- Optional but recommended: `lm-sensors` package, with `sudo sensors-detect` run once. The extension reads `/sys/class/hwmon` directly, but having lm-sensors set up ensures the `coretemp` driver is loaded.
+1. **Check your GNOME Shell version** to pick the right build:
+
+    ```sh
+    gnome-shell --version
+    ```
+
+    - **45 or newer** → modern zip
+    - **40–44** (RHEL 9, Ubuntu 22.04) → legacy zip
+
+2. **Download** the matching asset from the [latest release](https://github.com/robhilton/gnome-menu-cpu-util/releases/latest):
+
+    - `cpu-util@robhilton.dev.shell-extension.zip` — modern (GNOME Shell 45+)
+    - `cpu-util@robhilton.dev.legacy.shell-extension.zip` — legacy (GNOME Shell 40–44)
+
+3. **Install** the zip (use `--force` to overwrite an existing install on upgrade):
+
+    ```sh
+    gnome-extensions install --force ~/Downloads/cpu-util@robhilton.dev.shell-extension.zip
+    ```
+
+    Substitute the legacy filename if you downloaded that one.
+
+4. **Restart GNOME Shell:**
+
+    - Wayland: log out and back in.
+    - X11: press Alt+F2, type `r`, press Enter.
+
+5. **Enable** the extension:
+
+    ```sh
+    gnome-extensions enable cpu-util@robhilton.dev
+    ```
+
+6. **(Intel only) Grant RAPL power access.** Without this, the package power row reads `N/A`. The setup script ships inside the zip; run it once and then log out and back in:
+
+    ```sh
+    sudo ~/.local/share/gnome-shell/extensions/cpu-util@robhilton.dev/setup/install-rapl-access.sh
+    ```
+
+    The script creates a `powermon` group, adds your user to it, and installs a udev rule that grants the group read access to `/sys/class/powercap/intel-rapl:*/energy_uj` (root-only by default on most kernels). The log-out/in is required for the group membership to take effect.
+
+> **Tip:** Optional but recommended — `sudo apt install lm-sensors && sudo sensors-detect`. The extension reads `/sys/class/hwmon` directly, but having lm-sensors set up ensures the `coretemp` driver is loaded for temperatures.
 
 ### From source
+
+Build prerequisites: `glib-compile-schemas` (from `libglib2.0-bin`), `make`, `zip`.
 
 ```sh
 git clone https://github.com/robhilton/gnome-menu-cpu-util
@@ -35,14 +76,7 @@ make install
 
 `make install` auto-detects your `gnome-shell --version` and installs the modern build for 45+ or the legacy build for 40–44. To force one explicitly: `make install-modern` or `make install-legacy`. To check what would be picked: `make which`.
 
-Then restart GNOME Shell:
-- **Wayland**: log out and back in.
-- **X11**: press Alt+F2, type `r`, press Enter.
-
-Enable the extension:
-```sh
-gnome-extensions enable cpu-util@robhilton.dev
-```
+Then restart GNOME Shell, enable, and (on Intel) run the RAPL setup as in steps 4–6 above. The setup script is also at `./setup/install-rapl-access.sh` in the source tree.
 
 Open preferences:
 ```sh
@@ -52,20 +86,10 @@ gnome-extensions prefs cpu-util@robhilton.dev
 ### Uninstall
 
 ```sh
-make uninstall
+gnome-extensions uninstall cpu-util@robhilton.dev
 ```
 
-## RAPL power readings (Intel)
-
-On most kernels, `/sys/class/powercap/intel-rapl:*/energy_uj` is root-only. To let the extension read it without root:
-
-```sh
-sudo ./setup/install-rapl-access.sh
-```
-
-This creates a `powermon` group, adds your user to it, and installs a udev rule that grants the group read access to RAPL energy files. **Log out and back in** for the group membership to take effect.
-
-If you skip this step, the power row simply shows "N/A — set up required" with a link to the helper script.
+(Or `make uninstall` if installed from source.)
 
 ## Architecture (for contributors)
 
