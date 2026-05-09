@@ -47,7 +47,7 @@ If the indicator never appears or the shell logs throw, common culprits below.
 | `lib/stats/usage.js` | `/proc/stat` delta. Holds previous snapshot. |
 | `lib/stats/freq.js` | `scaling_cur_freq` per core + `scaling_governor`. |
 | `lib/stats/temp.js` | hwmon walk targeting `coretemp`; caches discovered `temp*_input` paths. |
-| `lib/stats/rapl.js` | `/sys/class/powercap/intel-rapl/*/energy_uj` → watts via Δenergy/Δt with wraparound. |
+| `lib/stats/rapl.js` | `/sys/class/powercap/intel-rapl:*/energy_uj` → watts via Δenergy/Δt with wraparound. |
 | `lib/stats/pstate.js` | `intel_pstate` driver: turbo, status, min/max %. |
 | `lib/stats/hybrid.js` | `classifyCore(cpu, caps)` → `'P' | 'E' | null`. |
 | `lib/stats/throttle.js` | `core_throttle_count` deltas. |
@@ -86,7 +86,7 @@ I haven't run this on Linux, so things to check first if there are issues:
 
 - `PopupMenu.PopupBaseMenuItem` constructor signature: `lib/menu.js` calls `super({ reactive: false, can_focus: false })`. Should be correct on 45+ but if it complains, try positional args.
 - `Adw.SwitchRow` and `Adw.SpinRow` are GNOME 44+ widgets — fine on 45+, but on 45.0 specifically there were some property quirks. If `prefs.js` errors out, fall back to `Adw.ActionRow` + a `Gtk.Switch`.
-- `_throttleBanner.actor` in `lib/menu.js` — on some Shell versions, `PopupMenuItem` doesn't expose `.actor` (it *is* the actor). If `actor.visible = false` errors, just use `.visible` directly on the item.
+- Popup menu item visibility should be set directly on the item with `.visible`. On some Shell versions, `PopupMenuItem` doesn't expose `.actor` because it is the actor.
 - `metadata.json` has `"shell-version": ["45","46","47","48"]`. If the user is on 49+ this'll need bumping.
 
 ## Verification (full)

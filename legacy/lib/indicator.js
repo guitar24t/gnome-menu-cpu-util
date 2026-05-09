@@ -78,7 +78,7 @@ class Indicator extends PanelMenu.Button {
             .filter(s => s !== null);
         const throttling = this._settings.get_boolean('show-throttle-alerts')
             && sample.throttle && sample.throttle.deltaCount > 0;
-        this._label.set_text(parts.join('  '));
+        this._label.set_text(parts.length > 0 ? parts.join('  ') : 'CPU');
         if (throttling)
             this._label.add_style_class_name('cpu-util-panel-label-throttling');
         else

@@ -73,6 +73,10 @@ function detectCpuCount() {
     return Math.max(count, 1);
 }
 
+function hasRaplDomains() {
+    return listDir('/sys/class/powercap').some(child => child.startsWith('intel-rapl:'));
+}
+
 function detectCapabilities() {
     const cpuinfo = readText('/proc/cpuinfo') || '';
     const vendorMatch = cpuinfo.match(/^vendor_id\s*:\s*(\S+)/m);
@@ -89,7 +93,7 @@ function detectCapabilities() {
     const pCores = isHybrid ? parseCpuList(pCoreList) : [];
     const eCores = isHybrid ? parseCpuList(eCoreList) : [];
 
-    const hasRapl = pathExists('/sys/class/powercap/intel-rapl/intel-rapl:0');
+    const hasRapl = hasRaplDomains();
     const coreTempHwmon = findCoreTempHwmon();
 
     return {

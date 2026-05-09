@@ -1,6 +1,6 @@
 #!/bin/sh
 # Install a udev rule that lets members of the 'powermon' group read Intel RAPL
-# energy counters from /sys/class/powercap/intel-rapl/*. Re-run safely.
+# energy counters from /sys/class/powercap/intel-rapl:*. Re-run safely.
 #
 # Usage:  sudo ./setup/install-rapl-access.sh [user-to-add]
 # Default user-to-add is $SUDO_USER (the user that invoked sudo).
@@ -49,4 +49,4 @@ udevadm trigger --subsystem-match=powercap
 
 echo
 echo "Done. You must LOG OUT and LOG BACK IN for the group membership to apply."
-echo "After that, /sys/class/powercap/intel-rapl/intel-rapl:0/energy_uj should be readable by '$TARGET_USER'."
+echo "After that, /sys/class/powercap/intel-rapl:0/energy_uj should be readable by '$TARGET_USER'."

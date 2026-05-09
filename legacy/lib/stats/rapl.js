@@ -1,7 +1,7 @@
 const { GLib } = imports.gi;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
-const { readText, listDir, pathExists } = Me.imports.lib.intel;
+const { readText, listDir } = Me.imports.lib.intel;
 
 const RAPL_BASE = '/sys/class/powercap';
 
@@ -39,12 +39,11 @@ var RaplSampler = class RaplSampler {
     constructor() {
         this._domains = null;
         this._prev = new Map();
-        this._accessible = pathExists(`${RAPL_BASE}/intel-rapl/intel-rapl:0`);
         this._readError = null;
     }
 
     isAccessible() {
-        return this._accessible && this._readError === null;
+        return this._readError === null;
     }
 
     lastError() {
@@ -85,7 +84,7 @@ var RaplSampler = class RaplSampler {
 
     sample() {
         this._ensureDiscovered();
-        if (!this._accessible || this._domains.length === 0)
+        if (this._domains.length === 0)
             return null;
 
         this._readError = null;

@@ -57,7 +57,7 @@ make uninstall
 
 ## RAPL power readings (Intel)
 
-On most kernels, `/sys/class/powercap/intel-rapl/*/energy_uj` is root-only. To let the extension read it without root:
+On most kernels, `/sys/class/powercap/intel-rapl:*/energy_uj` is root-only. To let the extension read it without root:
 
 ```sh
 sudo ./setup/install-rapl-access.sh
