@@ -30,7 +30,7 @@ Tested target: **Ubuntu 24.04 LTS / GNOME 46**. Modern build supports **GNOME Sh
     - **45 or newer** → modern zip
     - **40–44** (RHEL 9, Ubuntu 22.04) → legacy zip
 
-2. **Download** the matching asset from the [latest release](https://github.com/robhilton/gnome-menu-cpu-util/releases/latest):
+2. **Download** the matching asset from the [latest release](https://github.com/guitar24t/gnome-menu-cpu-util/releases/latest):
 
     - `cpu-util@robhilton.dev.shell-extension.zip` — modern (GNOME Shell 45+)
     - `cpu-util@robhilton.dev.legacy.shell-extension.zip` — legacy (GNOME Shell 40–44)
@@ -69,7 +69,7 @@ Tested target: **Ubuntu 24.04 LTS / GNOME 46**. Modern build supports **GNOME Sh
 Build prerequisites: `glib-compile-schemas` (from `libglib2.0-bin`), `make`, `zip`.
 
 ```sh
-git clone https://github.com/robhilton/gnome-menu-cpu-util
+git clone https://github.com/guitar24t/gnome-menu-cpu-util
 cd gnome-menu-cpu-util
 make install
 ```
