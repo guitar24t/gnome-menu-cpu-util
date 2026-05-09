@@ -2,7 +2,16 @@
 
 ## What this project is
 
-A GNOME Shell 45+ extension that adds a top-bar CPU monitor with Intel-specific telemetry. See `README.md` for the user-facing description and `/Users/roberthilton/.claude/plans/develop-a-gnome-menu-generic-frost.md` (or wherever the plan was synced) for the original design doc — though if there's drift between the plan and the code, **the code is authoritative**.
+A GNOME Shell extension that adds a top-bar CPU monitor with Intel-specific telemetry. See `README.md` for the user-facing description and `/Users/roberthilton/.claude/plans/develop-a-gnome-menu-generic-frost.md` (or wherever the plan was synced) for the original design doc — though if there's drift between the plan and the code, **the code is authoritative**.
+
+**Two trees, same UUID.** The repo ships two builds of the same extension:
+
+- **Modern** (root: `extension.js`, `prefs.js`, `lib/`) targets GNOME Shell 45+. ESM imports (`import X from 'gi://X'`), `Extension` class, `ExtensionPreferences` class, libadwaita prefs.
+- **Legacy** (`legacy/extension.js`, `legacy/prefs.js`, `legacy/lib/`) targets GNOME Shell 40–44. Legacy imports (`const X = imports.gi.X`), exported `init`/`enable`/`disable` functions, `buildPrefsWidget()` returning a GTK 3 widget tree (`imports.gi.versions.Gtk = '3.0'`).
+
+Both builds share `schemas/`, `stylesheet.css`, and `setup/`. `make install` auto-detects `gnome-shell --version` and installs the right one to `~/.local/share/gnome-shell/extensions/cpu-util@robhilton.dev/`. `make which` shows what would be picked.
+
+**When you change the modern code, the legacy tree does NOT update automatically.** Port the change by hand. The behavior is deliberately identical between the two; the only differences are the import system, the prefs UI toolkit, and the entry-point shape.
 
 ## Status when handed off
 
@@ -46,6 +55,22 @@ If the indicator never appears or the shell logs throw, common culprits below.
 | `schemas/org.gnome.shell.extensions.cpu-util.gschema.xml` | All settings keys. |
 
 The data flow is: `Poller._tick()` builds one `sample` object → `Indicator._onSample(sample)` → updates panel label and calls `CpuUtilMenu.update(sample)`.
+
+## Porting changes between modern and legacy
+
+When you edit a file under the project root, find the parallel file under `legacy/` and apply the equivalent change. The mapping:
+
+| Modern (`./`) | Legacy (`./legacy/`) | What's different |
+|---------------|----------------------|------------------|
+| `extension.js` | `legacy/extension.js` | Modern: `default class extends Extension`. Legacy: exported `init/enable/disable` functions, `Me = ExtensionUtils.getCurrentExtension()`. |
+| `prefs.js` | `legacy/prefs.js` | Modern: `Adw.PreferencesWindow` with `Adw.SwitchRow`/`Adw.SpinRow`/`Adw.ComboRow`. Legacy: GTK 3 (`Gtk.Frame` + `Gtk.Grid` + `Gtk.Switch`/`Gtk.SpinButton`/`Gtk.ComboBoxText`/`Gtk.CheckButton`), exported `buildPrefsWidget()`. |
+| `lib/intel.js` | `legacy/lib/intel.js` | Modern: `import { GLib, Gio } from 'gi://...'`. Legacy: `const { GLib, Gio } = imports.gi`. Both expose `readText/pathExists/listDir/detectCapabilities` as functions. |
+| `lib/poller.js`, `lib/menu.js`, `lib/indicator.js` | Same names under `legacy/lib/` | Imports differ (Modern uses `gi://` and `resource:///org/gnome/shell/...`; Legacy uses `imports.gi.X`, `imports.ui.popupMenu`, `imports.ui.panelMenu`). Class export differs: modern uses `export class X = GObject.registerClass(...)`, legacy assigns to top-level `var X` so `Me.imports.lib.X.X` is reachable. |
+| `lib/stats/*.js` | `legacy/lib/stats/*.js` | Same — import syntax differs, behavior identical. |
+
+Things that are NOT different: the GSettings schema, `stylesheet.css`, the `setup/` scripts, and the data flow (`Poller._tick` → `Indicator._onSample` → `CpuUtilMenu.update`).
+
+If you find yourself diverging the two builds in semantics, push back — that's likely a bug, not a feature. The split exists only because the load-time module system is different.
 
 ## Gotchas already encountered (don't re-litigate)
 

@@ -2,7 +2,7 @@
 
 Top-bar CPU monitor for GNOME Shell 45+. Shows live utilization, temperature, frequency, and governor at a glance, with first-class support for Intel-specific telemetry (RAPL package power, hybrid P-core / E-core split, turbo state, thermal-throttle alerts).
 
-Tested target: **Ubuntu 24.04 LTS / GNOME 46**. Should work on any distro running GNOME Shell 45–48.
+Tested target: **Ubuntu 24.04 LTS / GNOME 46**. Modern build supports **GNOME Shell 45–48**; a separate legacy build under `legacy/` supports **GNOME Shell 40–44** (covers RHEL 9, Ubuntu 22.04).
 
 > **Status:** v1 source written but **not yet runtime-tested** on a real GNOME Shell. First install on a Linux box may need small fixups. Contributors / AI agents picking this up should read [`CLAUDE.md`](./CLAUDE.md) first — it has architecture pointers, gotchas already encountered, and a verification checklist.
 
@@ -32,6 +32,8 @@ git clone https://github.com/robhilton/gnome-menu-cpu-util
 cd gnome-menu-cpu-util
 make install
 ```
+
+`make install` auto-detects your `gnome-shell --version` and installs the modern build for 45+ or the legacy build for 40–44. To force one explicitly: `make install-modern` or `make install-legacy`. To check what would be picked: `make which`.
 
 Then restart GNOME Shell:
 - **Wayland**: log out and back in.
