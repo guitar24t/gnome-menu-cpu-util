@@ -1,5 +1,6 @@
-imports.gi.versions.Gtk = '3.0';
-
+// GNOME Shell 40-44 loads prefs widgets under GTK 4. Do not try to force
+// GTK 3 here — by the time this file runs, the extensions service has
+// already required GTK 4, and `Gtk.Container.add` is gone.
 const { Gtk, Gio } = imports.gi;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -28,7 +29,7 @@ function makeFrame(title) {
         margin_start: 12,
         margin_end: 12,
     });
-    frame.add(grid);
+    frame.set_child(grid);
     return { frame, grid };
 }
 
@@ -47,6 +48,8 @@ function buildMetricsRow(settings) {
         orientation: Gtk.Orientation.VERTICAL,
         spacing: 4,
     });
+
+    const buttons = [];
 
     const sync = (button, metric) => {
         const current = settings.get_strv('panel-metrics');
@@ -67,19 +70,17 @@ function buildMetricsRow(settings) {
 
     const settingsChangedId = settings.connect('changed::panel-metrics', () => {
         const current = settings.get_strv('panel-metrics');
-        for (const child of box.get_children()) {
-            if (child._metric)
-                child.set_active(current.indexOf(child._metric) !== -1);
-        }
+        for (const entry of buttons)
+            entry.button.set_active(current.indexOf(entry.metric) !== -1);
     });
     box.connect('destroy', () => settings.disconnect(settingsChangedId));
 
     for (const m of METRICS) {
         const cb = new Gtk.CheckButton({ label: m.label });
-        cb._metric = m.id;
         cb.set_active(settings.get_strv('panel-metrics').indexOf(m.id) !== -1);
         cb.connect('toggled', () => sync(cb, m.id));
-        box.add(cb);
+        box.append(cb);
+        buttons.push({ button: cb, metric: m.id });
     }
 
     return box;
@@ -132,7 +133,7 @@ function buildPrefsWidget() {
     settings.bind('show-governor', showGov, 'active', Gio.SettingsBindFlags.DEFAULT);
     addRow(display.grid, 3, 'Show governor row', showGov);
 
-    root.add(display.frame);
+    root.append(display.frame);
 
     // ---- Top-bar metrics ----
     const metrics = makeFrame('Top-bar metrics');
@@ -143,7 +144,7 @@ function buildPrefsWidget() {
     });
     metrics.grid.attach(metricsLabel, 0, 0, 2, 1);
     metrics.grid.attach(buildMetricsRow(settings), 0, 1, 2, 1);
-    root.add(metrics.frame);
+    root.append(metrics.frame);
 
     // ---- Intel-specific ----
     const intel = makeFrame('Intel-specific');
@@ -162,8 +163,7 @@ function buildPrefsWidget() {
     settings.bind('show-throttle-alerts', throttle, 'active', Gio.SettingsBindFlags.DEFAULT);
     addRow(intel.grid, 2, 'Show thermal-throttle alerts', throttle);
 
-    root.add(intel.frame);
+    root.append(intel.frame);
 
-    root.show_all();
     return root;
 }

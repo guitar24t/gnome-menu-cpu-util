@@ -1,13 +1,14 @@
 const { GLib, Gio } = imports.gi;
+const ByteArray = imports.byteArray;
 
-const decoder = new TextDecoder();
-
+// GJS 1.68 (GNOME 40) has no global TextDecoder — added in 1.70. Use
+// imports.byteArray.toString, which works across the full 40-44 range.
 function readText(path) {
     try {
         const [ok, bytes] = GLib.file_get_contents(path);
         if (!ok)
             return null;
-        return decoder.decode(bytes);
+        return ByteArray.toString(bytes);
     } catch (_e) {
         return null;
     }
